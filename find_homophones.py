@@ -35,7 +35,9 @@ def create_all_permutations_excel():
     counter = 0
     all_chars_combinations = [combination for combination in
                               combinations_with_replacement(HOMOPHONE_HEBREW_CHARS, MAX_WORD_SIZE)]
-    for row in excel_sheet['{0}:{1}'.format(excel_sheet.min_row, SEARCH_MAX_ROW)]:
+    print len(all_chars_combinations)
+    rows = excel_sheet['{0}:{1}'.format(excel_sheet.min_row, SEARCH_MAX_ROW)]
+    for row in rows:
         counter += 1
         add_all_permutations(row, new_sheet, counter, all_chars_combinations)
     new_excel_file.save(path.join(EXCEL_FILE_PATH, NEW_EXCEL_FILE_NAME))
