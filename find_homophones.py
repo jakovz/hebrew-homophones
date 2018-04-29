@@ -2,7 +2,7 @@
 import openpyxl as xl
 from os import path
 from config import *
-from itertools import combinations_with_replacement
+from itertools import combinations
 import progressbar
 
 
@@ -10,12 +10,13 @@ import progressbar
 
 def add_all_permutations(row, new_sheet, counter, all_char_combinations):
     current_word = row[0].value.encode("UTF-8")
-    for combination in progressbar.progressbar(all_char_combinations):
+    for combination in all_char_combinations:
         for char in combination:
-            if char in current_word:
+            while char in current_word:
                 for equivalent_char in HOMOPHONE_HEBREW_CHARS[char]:
                     counter += 1
                     new_sheet["A%d" % counter] = current_word.replace(char, equivalent_char, 1)
+                    current_word = current_word.replace(char, equivalent_char, 1)
 
                     # note that *all* the possible combinations for every possible replacement are being processed.
 
@@ -34,10 +35,11 @@ def create_all_permutations_excel():
     new_sheet = new_excel_file.create_sheet()
     counter = 0
     all_chars_combinations = [combination for combination in
-                              combinations_with_replacement(HOMOPHONE_HEBREW_CHARS, MAX_WORD_SIZE)]
+                              combinations(HOMOPHONE_HEBREW_CHARS, MAX_WORD_SIZE)]
     print len(all_chars_combinations)
     rows = excel_sheet['{0}:{1}'.format(excel_sheet.min_row, SEARCH_MAX_ROW)]
-    for row in rows:
+    print len(rows)
+    for row in progressbar.progressbar(rows):
         counter += 1
         add_all_permutations(row, new_sheet, counter, all_chars_combinations)
     new_excel_file.save(path.join(EXCEL_FILE_PATH, NEW_EXCEL_FILE_NAME))
