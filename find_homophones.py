@@ -6,9 +6,11 @@ from itertools import combinations
 import progressbar
 
 
-# we will first ignore words that are written in the same way (analyzing their meaning is way harder).
-
 def add_all_permutations(row, new_sheet, counter, all_char_combinations):
+    """
+    adds all possible replacement combinations for the word given in row. the combinations are being processed,
+    and added to the new excel sheet (stored in memory till the sheet is closed).
+    """
     current_word = row[0].value.encode("UTF-8")
     for combination in all_char_combinations:
         for char in combination:
@@ -18,16 +20,11 @@ def add_all_permutations(row, new_sheet, counter, all_char_combinations):
                     new_sheet["A%d" % counter] = current_word.replace(char, equivalent_char, 1)
                     current_word = current_word.replace(char, equivalent_char, 1)
 
-                    # note that *all* the possible combinations for every possible replacement are being processed.
-
 
 def create_all_permutations_excel():
     """
-    for efficiency reasons we will first create a worksheet which will contain all the possible permutations for each
-    word. then, we will be able to iterate this worksheet and decide for each word in it if it is a legit word in the
-    language (by using the original sheet).
-
-    :return: saves a new worksheet.
+    creates a worksheet which will contain all the possible permutations for each word.
+    the new excel file will be saved to EXCEL_FILE_PATH with the name NEW_EXCEL_FILE_NAME.
     """
     excel_file = xl.load_workbook(path.join(EXCEL_FILE_PATH, EXCEL_FILE_NAME), read_only=True)
     excel_sheet = excel_file["sheet1"]
